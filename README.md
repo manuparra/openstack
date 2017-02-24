@@ -1,4 +1,4 @@
-# Instalación de OpenNebula
+# Instalación de OpenNebula RDO
 
 
 ## Arquitectura del sistema
