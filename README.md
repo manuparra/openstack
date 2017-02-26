@@ -160,6 +160,61 @@ Si has conectado correctamente, este paso está bien realizado.
 
 
 
+## Añadiendo espacio a CINDER
+
+Comprobamos en el nodo de control (``controller``) el espacio que hay disponible. Por defecto en la instalación de RDO, sólo se instalan 10GB de espacio y esto NO es suficiente, así que tendremos que ampliarlo.
+
+```
+[root@controller ]# vgs
+  VG             #PV #LV #SN Attr   VSize  VFree 
+  cinder-volumes   1   1   0 wz--n- 20.60g 10.60g
+```
+
+Ahora añadimos un nuevo volumen para CINDER:
+
+```
+dd if=/dev/zero of=cinder-volumes bs=1 count=0 seek=300G
+losetup /dev/loop3 cinder-volumes
+fdisk /dev/loop3
+```
+
+Usar la secuencia de teclas siguiente para el menu de ``fdisk``:
+
+```
+n
+p
+1
+ENTER
+ENTER
+t
+8e
+w
+```
+
+Creamos un dispositivo físico:
+
+```
+pvcreate /dev/loop3
+```
+
+Extendemos el volumen de cinder añadiendo el nuevo creado:
+
+```
+vgextend cinder-volumes  /dev/loop3
+```
+
+Comprobamos que se ha añadido el espacio a CINDER:
+
+```
+[root@controller ~]# vgs
+  VG             #PV #LV #SN Attr   VSize   VFree  
+  cinder-volumes   2   1   0 wz--n- 320.59g 310.59g
+```
+
+Si no has configurado en ``packstack`` cuales son los servidores de almacenamiento o donde está CINDER y el tamaño. Puedes hacerlo en la instalación indicando que servidores estarán disponibles para usar espacio de almacenamiento para CINDER.
+
+
+
 
 
 # Referencias
