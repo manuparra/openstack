@@ -173,9 +173,9 @@ Comprobamos en el nodo de control (``controller``) el espacio que hay disponible
 Ahora añadimos un nuevo volumen para CINDER:
 
 ```
-dd if=/dev/zero of=cinder-volumes bs=1 count=0 seek=300G
-losetup /dev/loop3 cinder-volumes
-fdisk /dev/loop3
+[root@controller ~]# dd if=/dev/zero of=cinder-volumes bs=1 count=0 seek=300G
+[root@controller ~]# losetup /dev/loop3 cinder-volumes
+[root@controller ~]# fdisk /dev/loop3
 ```
 
 Usar la secuencia de teclas siguiente para el menu de ``fdisk``:
@@ -194,13 +194,13 @@ w
 Creamos un dispositivo físico:
 
 ```
-pvcreate /dev/loop3
+[root@controller ~]# pvcreate /dev/loop3
 ```
 
 Extendemos el volumen de cinder añadiendo el nuevo creado:
 
 ```
-vgextend cinder-volumes  /dev/loop3
+[root@controller ~]# vgextend cinder-volumes  /dev/loop3
 ```
 
 Comprobamos que se ha añadido el espacio a CINDER:
@@ -214,6 +214,13 @@ Comprobamos que se ha añadido el espacio a CINDER:
 Si no has configurado en ``packstack`` cuales son los servidores de almacenamiento o donde está CINDER y el tamaño. Puedes hacerlo en la instalación indicando que servidores estarán disponibles para usar espacio de almacenamiento para CINDER.
 
 
+
+# Afinar la instalación de OpenNebula
+
+## Añadir más nodos de almacenamiento con CINDER
+
+
+## Añadir más nodos de RED (network)
 
 
 
