@@ -189,6 +189,20 @@ CONFIG_KEYSTONE_ADMIN_PW= <contraseña>
 ```
 El servidor NTP deberá ser el propio de nuestra región.
 
+### Instalar OpenStack
+
+### Acceder a la interfaz web
+
+### Crear proyectos y añadir usuarios
+
+#### Crear un "sabor" e imagen
+
+#### Crear la red y el router del proyecto
+
+#### Añadir grupos de seguridad y claves
+
+### Lanzar una instancia
+
 ## Añadiendo espacio a CINDER
 
 Comprobamos en el nodo de control (``controller``) el espacio que hay disponible. Por defecto en la instalación de RDO, sólo se instalan 10GB de espacio y esto **NO** es suficiente, así que tendremos que ampliarlo.
