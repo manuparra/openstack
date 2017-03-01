@@ -10,22 +10,22 @@ Para esta instalación básica usaremos 3 nodos físicos con el siguiente esquem
 Nodos del diagrama:
 
 - Control (**Controller**): nodecontroller 
-- Computo (**Compute**): nodecompute -- Se encarga de la gestión/ejecución, etc. de las MVs
+- Computo (**Compute**): nodecompute -- Se encarga de la gestión/ejecución, etcétera de las MVs
 - Red (**Network**): nodenetwork -- Exclusivamente dedicado al soporte de redes en la instalación de OpenStack. Hay muchas posibilidades, pero como recomendación, lo ideal es que sea un nodo dedicado a esta tarea y no se mezcle con los demás.
 
 Algunas consideraciones sobre el diagrama:
 
 - En nuestro caso todos los nodos tienen instalado **CentOS7 Minimal** como distribución linux
-- Todos los nodos conectados a la misma red y switch por ethernet (o infiniband)
-- Todos los nodos deben tener acceso a internet
+- Todos los nodos conectados a la misma red y switch por Ethernet (o Infiniband)
+- Todos los nodos deben tener acceso a Internet
 - Uno de los nodos será exclusivo e independiente para la gestión de redes (Neutron) de OpenStack.
 
 Características de los nodos
 
-- 32 cores
-- 256 GB RAM
-- 2 HD con 2TB cada uno
-- 4 Tarjetas de red y 1 infiniband, pero sólo se usará una conexión ethernet.
+- 32 cores.
+- 256 GB RAM.
+- 2 HD con 2TB cada uno.
+- 4 tarjetas de red y 1 Infiniband, pero sólo se usará una conexión Ethernet.
 
 ## Datos de los nodos
 
@@ -79,7 +79,7 @@ Neutron L3 agent
 
 ### Actualización de paquetes en CentOS 7
 
-Una vez configurados los nodos con su IP correspondiente y validado el acceso a Internet de los tres nodos, pasamos a realizar un ``update`` para cada nodo: 
+Una vez configurados los nodos con su IP correspondiente y validado el acceso a Internet de los mismos, pasamos a realizar un ``update`` para cada nodo: 
 
 ```
 [root@nodecontroller]$ yum -y update ; reboot
@@ -136,7 +136,7 @@ reboot
 
 ### Configurar SSH passwordless desde el nodo de control a los demás.
 
-Esto es importante, ya que permite que entre los nodos se pueda conectar con SSH sin utilizar la clave. En este caso lo que se usa es la clave publica, para autenticar dentro del grupo de nodos que tenemos:
+Esto es importante, ya que permite que, entre los nodos, se pueda conectar con SSH sin utilizar la clave. En este caso lo que se usa es la clave pública, para autenticar dentro del grupo de nodos que tenemos:
 
 En el ``nodecontroller``:
 
@@ -146,7 +146,7 @@ En el ``nodecontroller``:
 [root@controller ]# ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.152
 ```
 
-Hecho esto, chequea que puedes conectarte con ssh a cada uno de los nodos sin que pida el password por teclado:
+Hecho esto, chequea que puedes conectarte con SSH a cada uno de los nodos sin que pida la clave por teclado:
 
 ```
 [root@nodecontroller ~]# ssh root@192.168.10.151
@@ -162,7 +162,7 @@ Si has conectado correctamente, este paso está bien realizado.
 
 ## Añadiendo espacio a CINDER
 
-Comprobamos en el nodo de control (``controller``) el espacio que hay disponible. Por defecto en la instalación de RDO, sólo se instalan 10GB de espacio y esto NO es suficiente, así que tendremos que ampliarlo.
+Comprobamos en el nodo de control (``controller``) el espacio que hay disponible. Por defecto en la instalación de RDO, sólo se instalan 10GB de espacio y esto **NO** es suficiente, así que tendremos que ampliarlo.
 
 ```
 [root@controller ]# vgs
@@ -178,7 +178,7 @@ Ahora añadimos un nuevo volumen para CINDER:
 [root@controller ~]# fdisk /dev/loop3
 ```
 
-Usar la secuencia de teclas siguiente para el menu de ``fdisk``:
+Usar la secuencia de teclas siguiente para el menú de ``fdisk``:
 
 ```
 n
@@ -211,7 +211,7 @@ Comprobamos que se ha añadido el espacio a CINDER:
   cinder-volumes   2   1   0 wz--n- 320.59g 310.59g
 ```
 
-Si no has configurado en ``packstack`` cuales son los servidores de almacenamiento o donde está CINDER y el tamaño. Puedes hacerlo en la instalación indicando que servidores estarán disponibles para usar espacio de almacenamiento para CINDER.
+Si no has configurado en ``packstack`` cuales son los servidores de almacenamiento o dónde está CINDER y el tamaño, puedes hacerlo en la instalación indicando qué servidores estarán disponibles para usar espacio de almacenamiento para CINDER.
 
 
 
