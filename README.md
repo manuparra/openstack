@@ -141,9 +141,9 @@ Esto es importante, ya que permite que, entre los nodos, se pueda conectar con S
 En el ``nodecontroller``:
 
 ```
-[root@controller ]# ssh-keygen
-[root@controller ]# ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.151
-[root@controller ]# ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.152
+[root@nodecontroller ]# ssh-keygen
+[root@nodecontroller ]# ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.151
+[root@nodecontroller ]# ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.152
 ```
 
 Hecho esto, chequea que puedes conectarte con SSH a cada uno de los nodos sin que pida la clave por teclado:
@@ -155,8 +155,15 @@ Hecho esto, chequea que puedes conectarte con SSH a cada uno de los nodos sin qu
 
 Si has conectado correctamente, este paso está bien realizado.
 
+### Habilitar el repositorio de RDO e instalar PackStack
 
+Con los siguientes comandos añadiremos a nuestro sistema el repositorio de RDO, donde se encuentra PackStack, y lo instalaremos:
 
+Serán ejecutados en ``nodecontroller``:
+```
+[root@nodecontroller ]# yum install -y https://www.rdoproject.org/repos/rdo-release.rpm
+[root@nodecontroller ]# yum install -y openstack-packstack
+```
 
 
 
