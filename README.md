@@ -164,8 +164,30 @@ Serán ejecutados en ``nodecontroller``:
 [root@nodecontroller ]# yum install -y https://www.rdoproject.org/repos/rdo-release.rpm
 [root@nodecontroller ]# yum install -y openstack-packstack
 ```
+### Generar y personalizar el fichero de instalación
 
+Con el siguiente comando generaremos el fichero de instalación ("Answer File" según PackStack).
 
+En el ``nodecontroller``:
+```
+[root@nodecontroller ]# packstack --gen-answer-file=/root/instalacion.txt
+```
+Editaremos este fichero modificando las opciones que nos interesen. Para esta instalación añadiremos las IP de nuestros nodos, desactivaremos la demostración, desactivaremos Ceilometer, añadiremos un servidor para NTP y cambiaremos las contraseñas de los servicios que nos interesen.
+En el ``nodecontroller``:
+```
+[root@controller ~]# vi /root/instalacion.txt
+........................................
+CONFIG_CONTROLLER_HOST=192.168.10.150
+CONFIG_COMPUTE_HOSTS=192.168.10.151
+CONFIG_NETWORK_HOSTS=192.168.10.153
+CONFIG_PROVISION_DEMO=n
+CONFIG_CEILOMETER_INSTALL=n
+CONFIG_HORIZON_SSL=y
+CONFIG_NTP_SERVERS= 1.es.pool.ntp.org
+CONFIG_KEYSTONE_ADMIN_PW= <contraseña>
+..........................................
+```
+El servidor NTP deberá ser el propio de nuestra región.
 
 ## Añadiendo espacio a CINDER
 
