@@ -259,15 +259,19 @@ Desde interfaz:
 - Nos logeamos en el dashboard con las credenciales del admin y accedemos en el menú situado a la izquierda a Identidad->Proyectos-> y clickamos en crear proyecto
 
 Desde terminal:
+```
 openstack project create --domain default --description "Proyecto demo" demo
+```
 
 Para crear usuarios
 
 Desde interfaz:
-Con el mismo login de admin. Vamos a Identidad->Usuarios->Crear usuario. Rellenamos los parámetros que se pidan, en mi caso solo rellenamos los campos obligatorios y asociamos el usuario al proyecto que deseemos.
+- Con el mismo login de admin. Vamos a Identidad->Usuarios->Crear usuario. Rellenamos los parámetros que se pidan, en mi caso solo rellenamos los campos obligatorios y asociamos el usuario al proyecto que deseemos.
 
 Desde terminal:
+```
 openstack user create --domain default --password-prompt demo
+```
 
 #### Crear un "sabor" e imagen
 
