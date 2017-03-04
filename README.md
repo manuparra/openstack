@@ -191,9 +191,87 @@ El servidor NTP deberá ser el propio de nuestra región.
 
 ### Instalar OpenStack
 
+Una vez editado el fichero de configuracion ```/root/instalacion.txt``` pasamos a realizar la instalación de openstack con packstack. Para ello lanzamos el siguiente comando:
+```
+[root@controller ~]# packstack --answer-file=/root/answer.txt
+```
+Una vez realizada la instalación sin ningún error podremos ver como se ha creado una interfaz de red en el nodo de red(nodenetwork), llamada ``` br-ex ```. Esta se puede ver ejecutando ```ifconfig -a```. Una vez comprobado que realmente está la interfaz de red en el nodo de red hacemos esta nueva interfaz sea la que dara acceso al exterior y la otra interfaz interna sera la que interconectara los nodos. Para ello copiamos la configuración de la interfaz existente a la nueva interfaz ```br-ex``` y la editamos.
+```
+[root@network ~]# cd /etc/sysconfig/network-scripts/
+[root@network network-scripts]# cp ifcfg-enp0s3 ifcfg-br-ex
+[root@network network-scripts]# vi ifcfg-enp0s3
+........................................
+DEVICE=enp1s0
+HWADDR=<la correspondiente>
+TYPE=OVSPort
+DEVICETYPE=ovs
+OVS_BRIDGE=br-ex
+ONBOOT=yes
+........................................
+
+........................................
+[root@network network-scripts]# vi ifcfg-br-ex
+DEVICE=br-ex
+DEVICETYPE=ovs
+TYPE=OVSBridge
+BOOTPROTO=static
+IPADDR=192.168.10.153
+NETMASK=255.255.255.0
+GATEWAY=192.168.10.1
+DNS1=192.168.10.10
+DNS2=8.8.8.8
+ONBOOT=yes
+........................................
+```
+
+Acabada la edición, pasamos a reiniciar el servicio de red.
+```
+[root@network network-scripts]# systemctl restart network
+```
+
 ### Acceder a la interfaz web
 
+Para chequear que todo se instaló correctamente accedemos al ```dashboard```, por lo que escribimos en el navegador la ip del nodo de control(nodecontroller)
+
+```
+https://192.168.10.150/dashboard
+```
+
 ### Crear proyectos y añadir usuarios
+
+Para crear un proyecto y añadir usuarios en OpenStack lo podemos hacer de dos formas, mediante terminal o interfaz.
+Para poder ejecutar el comando ```openstack``` y usar los parámetros y comandos que ofrece, hay que ejecutar ```keystoneadminrc``` para ello lanzamos ```source keystoneadminrc``` y para poder hacer luego acciones propias del admin desde la linea de comandos ejecutamos los siguientes comandos:
+
+```
+export OS_USERNAME=admin
+export OS_PASSWORD=<contraseña admin>
+export OS_PROJECT_NAME=<nombre proyecto>
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_AUTH_URL=http://nodecontroller:<port>/v3
+export OS_IDENTITY_API_VERSION=3
+```
+
+Estos comandos almacenan las credenciales para hacer las operaciones de admin, "logeandonos" desde la terminal. Para una mayor comodidad estos se pueden almacenar en un script y lanzar el script cuando se necesite sin necesidad de estar ejecutándolo uno a uno. Si creamos el script y le ponemos de nombre ```credenciales.sh``` y guardamos ahí las variables. La ejecución de este script se hace con ```. credenciales.sh```.
+En caso de que haya alguna duda sobre estas credenciales, nos podemos descargar un fichero que trae OpenStack con toda esta información almacenada. Esta información se puede obtener desde el dashboard y accediendo a Proyecto->Compute->Acceso y seguridad y ```Fichero RC de OpenStack v3 o v2``` según el caso.
+
+Desde interfaz:
+- Nos logeamos en el dashboard con las credenciales del admin y accedemos en el menú situado a la izquierda a Identidad->Proyectos-> y clickamos en crear proyecto
+
+Desde terminal:
+```
+openstack project create --domain default --description "Proyecto demo" demo
+```
+
+Para crear usuarios
+
+Desde interfaz:
+- Con el mismo login de admin. Vamos a Identidad->Usuarios->Crear usuario. Rellenamos los parámetros que se pidan, en mi caso solo rellenamos los campos obligatorios y asociamos el usuario al proyecto que deseemos.
+
+Desde terminal:
+```
+openstack user create --domain default --password-prompt demo
+```
 
 #### Crear un "sabor" e imagen
 
