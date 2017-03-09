@@ -1,5 +1,32 @@
 # Instalación de OpenNebula RDO
 
+Table of Contents
+=================
+
+   * [Instalación de OpenNebula RDO](#instalación-de-opennebula-rdo)
+      * [Arquitectura del sistema](#arquitectura-del-sistema)
+      * [Datos de los nodos](#datos-de-los-nodos)
+      * [Qué se instalará en cada nodo](#qué-se-instalará-en-cada-nodo)
+      * [Instalación con RDO y PackStack](#instalación-con-rdo-y-packstack)
+         * [Actualización de paquetes en CentOS 7](#actualización-de-paquetes-en-centos-7)
+         * [Actualización de fichero hosts](#actualización-de-fichero-hosts)
+         * [Deshabilitar SELINUX y NetworkManager](#deshabilitar-selinux-y-networkmanager)
+         * [Configurar SSH passwordless desde el nodo de control a los demás.](#configurar-ssh-passwordless-desde-el-nodo-de-control-a-los-demás)
+         * [Habilitar el repositorio de RDO e instalar PackStack](#habilitar-el-repositorio-de-rdo-e-instalar-packstack)
+         * [Generar y personalizar el fichero de instalación](#generar-y-personalizar-el-fichero-de-instalación)
+         * [Instalar OpenStack](#instalar-openstack)
+         * [Acceder a la interfaz web](#acceder-a-la-interfaz-web)
+         * [Crear proyectos y añadir usuarios](#crear-proyectos-y-añadir-usuarios)
+            * [Crear un "sabor" e imagen](#crear-un-sabor-e-imagen)
+            * [Crear la red y el router del proyecto](#crear-la-red-y-el-router-del-proyecto)
+            * [Añadir grupos de seguridad y claves](#añadir-grupos-de-seguridad-y-claves)
+         * [Lanzar una instancia](#lanzar-una-instancia)
+      * [Añadiendo espacio a CINDER](#añadiendo-espacio-a-cinder)
+   * [Afinar la instalación de OpenNebula](#afinar-la-instalación-de-opennebula)
+      * [Añadir más nodos de almacenamiento con CINDER](#añadir-más-nodos-de-almacenamiento-con-cinder)
+      * [Añadir más nodos de RED (network)](#añadir-más-nodos-de-red-network)
+   * [ Referencias](#referencias)
+
 
 ## Arquitectura del sistema
 
