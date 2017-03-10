@@ -18,7 +18,8 @@ En este tutorial cubre los siguientes aspectos:
 Este manual completo está desarrollado por Rubén Castro, Juan A. Cortés y Manuel J. Parra dentro del marco de trabajo del Laboratorio  Distributed Computational Intelligence and Time Series y el departamento de Ciencias de la Computación e Inteligencia Artificial de la Universidad de Granada, para el proyecto Minería de Datos en CloudComputing.
 
 
-### Reditribución del tutorial
+
+### Redistribución del tutorial
 
 Recuerda citar a los autores y la referencia a este repositorio si usas el material que aquí se expone. 
 
@@ -70,6 +71,7 @@ Algunas consideraciones sobre el diagrama:
 - En nuestro caso todos los nodos tienen instalado **CentOS7 Minimal** como distribución linux
 - Todos los nodos conectados a la misma red y switch por Ethernet (o Infiniband)
 - Todos los nodos deben tener acceso a Internet
+- Las particiones de disco son particiones estandar de 900 GB para la partición raíz / y el resto para swap (no LVM)
 - Uno de los nodos será exclusivo e independiente para la gestión de redes (Neutron) de OpenStack.
 
 Características de los nodos
@@ -77,7 +79,14 @@ Características de los nodos
 - 32 cores.
 - 256 GB RAM.
 - 2 HD con 2TB cada uno.
-- 4 tarjetas de red y 1 Infiniband, pero sólo se usará una conexión Ethernet.
+- 4 tarjetas de red y 1 Infiniband, pero sólo se usará una de ellas.
+
+La instalación mínima es admitible es:
+
+- 8 cores
+- 8 GB de RAM
+- 1 HD con 1 TB
+- 1 Tarjeta de red para cada nodo
 
 ## Datos de los nodos
 
