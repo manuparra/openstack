@@ -1,6 +1,6 @@
 # Instalación y despliegue de OpenNebula 
 
-<img src="https://pbs.twimg.com/profile_images/810981601253261312/V1zRfeKR.jpg" width="150">
+<img src="http://zdnet2.cbsistatic.com/hub/i/r/2016/10/25/e2569fbb-c7f8-4f5c-9b81-f841816e5261/resize/770xauto/b291ee9185e8472b75b6875fda72b3f4/openstack-logo-2016.png" width="600">
 
 
 Contenido
