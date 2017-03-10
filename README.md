@@ -1,6 +1,9 @@
-# Instalación de OpenNebula RDO
+# Instalación y despliegue de OpenNebula 
 
-Table of Contents
+<img src="https://pbs.twimg.com/profile_images/810981601253261312/V1zRfeKR.jpg" width="150">
+
+
+Contenido
 =================
 
    * [Instalación de OpenNebula RDO](#instalación-de-opennebula-rdo)
