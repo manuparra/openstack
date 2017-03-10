@@ -1,6 +1,17 @@
+<img src="http://zdnet2.cbsistatic.com/hub/i/r/2016/10/25/e2569fbb-c7f8-4f5c-9b81-f841816e5261/resize/770xauto/b291ee9185e8472b75b6875fda72b3f4/openstack-logo-2016.png" width="600">
+
+
 # Instalación y despliegue de OpenNebula 
 
-<img src="http://zdnet2.cbsistatic.com/hub/i/r/2016/10/25/e2569fbb-c7f8-4f5c-9b81-f841816e5261/resize/770xauto/b291ee9185e8472b75b6875fda72b3f4/openstack-logo-2016.png" width="600">
+Manual completo y funcional de instalación, despliegue y uso de OpenStack en modo MULTI-NODO sobre CentOS7 con RDO. Este manual se ha desarrollado para poner en producción un cluster completo con todos los servicios de OpenStack, desde la instalación básica hasta aspectos más complejos de despliegue, uso y automatización.
+
+En este tutorial cubre los siguientes aspectos:
+
+- Instalación de OpenStack sobre tres nodos: **Control, Computo y Red**.
+- Instalación adicional de nodos (+ de 3) para diversos roles control, computo y red.
+- Alta disponibilidad en OpenStack.
+- Gestión de OpenStack desde línea de comandos [en proceso].
+- Despligue de servicios de BigData sobre OpenStack: HDFS, Hadoop, Spark, etc. [pendiente].
 
 
 Contenido
@@ -36,6 +47,8 @@ Contenido
 Para esta instalación básica usaremos 3 nodos físicos con el siguiente esquema y arquitectura de red:
 
 <a data-flickr-embed="true" data-footer="true"  href="https://www.flickr.com/photos/manuparra/32868225721/in/dateposted-public/" title="OpenStack Basic Architecture"><img src="https://c1.staticflickr.com/4/3832/32868225721_62f7016426_z.jpg" width="640" height="453" alt="OpenStack Basic Architecture"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>
+
+
 
 Nodos del diagrama:
 
