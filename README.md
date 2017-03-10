@@ -15,7 +15,13 @@ En este tutorial cubre los siguientes aspectos:
 
 ## Autoría
 
-Este manual completo está desarrollado por Rubén Castro, Juan Antonio y Manuel J. Parra dentro del marco de trabajo del Laboratorio  Distributed Computational Intelligence and Time Series y el departamento de Ciencias de la Computación e Inteligencia Artificial de la Universidad de Granada.
+Este manual completo está desarrollado por Rubén Castro, Juan A. Cortés y Manuel J. Parra dentro del marco de trabajo del Laboratorio  Distributed Computational Intelligence and Time Series y el departamento de Ciencias de la Computación e Inteligencia Artificial de la Universidad de Granada, para el proyecto Minería de Datos en CloudComputing.
+
+
+### Reditribución del tutorial
+
+Recuerda citar a los autores y la referencia a este repositorio si usas el material que aquí se expone. 
+
 
 Contenido
 =================
