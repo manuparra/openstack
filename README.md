@@ -137,6 +137,36 @@ Neutron L3 agent
 
 ## Instalación con RDO y PackStack
 
+
+
+### Actualización de fichero hosts
+
+Fijamos el nombre de cada uno de los nodos:
+
+Para el nodo controlador (IP: 192.168.6.50), ponemos el nombre:
+```
+hostnamectl set-hostname nodecontroller
+```
+
+Para el nodo de computo (IP: 192.168.6.51), ponemos el nombre:
+```
+hostnamectl set-hostname nodecompute
+```
+
+Para el nodo de red (IP: 192.168.6.52), ponemos el nombre:
+```
+hostnamectl set-hostname nodenetwork
+```
+
+Y añadimos la información correspondiente en ``/etc/hosts``:
+
+```
+192.168.10.150 nodecontroller.dicits.es nodecontroller
+192.168.10.151 nodecompute.dicits.es    nodecompute
+192.168.10.152 nodenetwork.dicits.es    nodenetwork
+```
+
+
 ### Actualización de paquetes en CentOS 7
 
 Una vez configurados los nodos con su IP correspondiente y validado el acceso a Internet de los mismos, pasamos a realizar un ``update`` para cada nodo: 
@@ -153,29 +183,6 @@ Una vez configurados los nodos con su IP correspondiente y validado el acceso a 
 [root@nodenetwork]$ yum -y update ; reboot
 ```
 
-### Actualización de fichero hosts
-
-Fijamos el nombre de cada uno de los nodos:
-
-```
-[root@nodenetwork]$ hostnamectl set-hostname nodecontroller
-```
-
-```
-[root@nodenetwork]$ hostnamectl set-hostname nodecompute
-```
-
-```
-[root@nodenetwork]$ hostnamectl set-hostname nodenetwork
-```
-
-Y añadimos la información correspondiente en ``/etc/hosts``:
-
-```
-192.168.10.150 nodecontroller.dicits.es nodecontroller
-192.168.10.151 nodecompute.dicits.es    nodecompute
-192.168.10.152 nodenetwork.dicits.es    nodenetwork
-```
 
 ### Deshabilitar SELINUX y NetworkManager
 
