@@ -141,7 +141,7 @@ Neutron L3 agent
 
 ### Actualización de fichero hosts
 
-Fijamos el nombre de cada uno de los nodos:
+Una vez configurados los nodos con su IP correspondiente y validado el acceso a Internet de los mismos, fijamos el nombre de cada uno de los nodos (``hostname``):
 
 Para el nodo controlador (IP: 192.168.6.50), ponemos el nombre:
 ```
@@ -158,7 +158,7 @@ Para el nodo de red (IP: 192.168.6.52), ponemos el nombre:
 hostnamectl set-hostname nodenetwork
 ```
 
-Y añadimos la información correspondiente en ``/etc/hosts``:
+Y añadimos el siguiente esquema en ``/etc/hosts`` en cada uno de los nodos :
 
 ```
 192.168.10.150 nodecontroller.dicits.es nodecontroller
@@ -166,10 +166,12 @@ Y añadimos la información correspondiente en ``/etc/hosts``:
 192.168.10.152 nodenetwork.dicits.es    nodenetwork
 ```
 
+*En lugar de ``.dicits.es`` puedes poner algo como ``miorganizacion.com`` o similar*
+
 
 ### Actualización de paquetes en CentOS 7
 
-Una vez configurados los nodos con su IP correspondiente y validado el acceso a Internet de los mismos, pasamos a realizar un ``update`` para cada nodo: 
+Pasamos a realizar un ``update`` para cada nodo: 
 
 ```
 [root@nodecontroller]$ yum -y update ; reboot
