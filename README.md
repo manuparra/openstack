@@ -13,6 +13,9 @@ En este tutorial cubre los siguientes aspectos:
 - Gestión de OpenStack desde línea de comandos [en proceso].
 - Despligue de servicios de BigData sobre OpenStack: HDFS, Hadoop, Spark, etc. [pendiente].
 
+## Autoría
+
+Este manual completo está desarrollado por Rubén Castro, Juan Antonio y Manuel J. Parra dentro del marco de trabajo del Laboratorio  Distributed Computational Intelligence and Time Series y el departamento de Ciencias de la Computación e Inteligencia Artificial de la Universidad de Granada.
 
 Contenido
 =================
