@@ -1,7 +1,7 @@
 <img src="http://zdnet2.cbsistatic.com/hub/i/r/2016/10/25/e2569fbb-c7f8-4f5c-9b81-f841816e5261/resize/770xauto/b291ee9185e8472b75b6875fda72b3f4/openstack-logo-2016.png" width="600">
 
 
-# Instalación y despliegue de OpenNebula 
+# Instalación y despliegue de OpenStack
 
 Manual completo y funcional de instalación, despliegue y uso de OpenStack en modo MULTI-NODO sobre CentOS7 con RDO. Este manual se ha desarrollado para poner en producción un cluster completo con todos los servicios de OpenStack, desde la instalación básica hasta aspectos más complejos de despliegue, uso y automatización.
 
@@ -20,13 +20,13 @@ Este manual completo está desarrollado por Rubén Castro, Juan A. Cortés y Man
 
 ### Redistribución del tutorial
 
-Recuerda citar a los autores y la referencia a este repositorio si usas el material que aquí se expone. 
+Recuerda citar a los autores y la referencia a este repositorio si usas el material que aquí se expone.
 
 
 Contenido
 =================
 
-   * [Instalación de OpenNebula RDO](#instalación-de-opennebula-rdo)
+   * [Instalación de OpenStack RDO](#instalación-de-openstack-rdo)
       * [Arquitectura del sistema](#arquitectura-del-sistema)
       * [Datos de los nodos](#datos-de-los-nodos)
       * [Qué se instalará en cada nodo](#qué-se-instalará-en-cada-nodo)
@@ -45,7 +45,7 @@ Contenido
             * [Añadir grupos de seguridad y claves](#añadir-grupos-de-seguridad-y-claves)
          * [Lanzar una instancia](#lanzar-una-instancia)
       * [Añadiendo espacio a CINDER](#añadiendo-espacio-a-cinder)
-   * [Afinar la instalación de OpenNebula](#afinar-la-instalación-de-opennebula)
+   * [Afinar la instalación de OpenStack](#afinar-la-instalación-de-openstack)
       * [Añadir más nodos de almacenamiento con CINDER](#añadir-más-nodos-de-almacenamiento-con-cinder)
       * [Añadir más nodos de RED (network)](#añadir-más-nodos-de-red-network)
    * [ Referencias](#referencias)
@@ -61,7 +61,7 @@ Para esta instalación básica usaremos 3 nodos físicos con el siguiente esquem
 
 Nodos del diagrama:
 
-- Control (**Controller**): nodecontroller 
+- Control (**Controller**): nodecontroller
 - Computo (**Compute**): nodecompute -- Se encarga de la gestión/ejecución, etcétera de las MVs
 - Red (**Network**): nodenetwork -- Exclusivamente dedicado al soporte de redes en la instalación de OpenStack. Hay muchas posibilidades, pero como recomendación, lo ideal es que sea un nodo dedicado a esta tarea y no se mezcle con los demás.
 
@@ -117,7 +117,7 @@ DNS  		:192.168.10.10
 
 ## Qué se instalará en cada nodo
 
-- nodecontroller 
+- nodecontroller
 ```
 Keystone, Glance, swift, Cinder, Horizon, Neutron, Nova novncproxy, Novnc, Nova api, Nova Scheduler, Nova-conductor
 ```
@@ -171,7 +171,7 @@ Y añadimos el siguiente esquema en ``/etc/hosts`` en cada uno de los nodos :
 
 ### Actualización de paquetes en CentOS 7
 
-Pasamos a realizar un ``update`` para cada nodo: 
+Pasamos a realizar un ``update`` para cada nodo:
 
 ```
 [root@nodecontroller]$ yum -y update ; reboot
@@ -188,7 +188,7 @@ Pasamos a realizar un ``update`` para cada nodo:
 
 ### Deshabilitar SELINUX y NetworkManager
 
-En cada uno de los nodos modificar el fichero ``/etc/sysconfig/selinux`` cambiar ``SELINUX=disabled`` 
+En cada uno de los nodos modificar el fichero ``/etc/sysconfig/selinux`` cambiar ``SELINUX=disabled``
 
 También deshabilitar NetworkManager en cada uno de los nodos:
 
@@ -219,7 +219,7 @@ Hecho esto, chequea que puedes conectarte con SSH a cada uno de los nodos sin qu
 
 ```
 [root@nodecontroller ~]# ssh root@192.168.10.151
-[root@nodecompute ~]# 
+[root@nodecompute ~]#
 ```
 
 Si has conectado correctamente, este paso está bien realizado.
@@ -260,18 +260,23 @@ El servidor NTP deberá ser el propio de nuestra región.
 
 ### Instalar OpenStack
 
-Una vez editado el fichero de configuracion ```/root/instalacion.txt``` pasamos a realizar la instalación de openstack con packstack. Para ello lanzamos el siguiente comando:
+Una vez editado el fichero de configuración ```/root/instalacion.txt``` pasamos
+a realizar la instalación de OpenStack con PackStack. Para ello lanzamos el siguiente comando:
+En el ``nodecontroller``:
 ```
-[root@controller ~]# packstack --answer-file=/root/answer.txt
+[root@controller ~]# packstack --answer-file=/root/instalacion.txt
 ```
-Una vez realizada la instalación sin ningún error podremos ver como se ha creado una interfaz de red en el nodo de red(nodenetwork), llamada ``` br-ex ```. Esta se puede ver ejecutando ```ifconfig -a```. Una vez comprobado que realmente está la interfaz de red en el nodo de red hacemos esta nueva interfaz sea la que dara acceso al exterior y la otra interfaz interna sera la que interconectara los nodos. Para ello copiamos la configuración de la interfaz existente a la nueva interfaz ```br-ex``` y la editamos.
+Una vez realizada la instalación sin ningún error podremos ver como se ha
+creado una nueva interfaz de red en el nodo de red (``nodenetwork``), llamada ``br-ex``. Ésta se puede ver ejecutando ``ifconfig -a``. Una vez comprobado
+que realmente está la interfaz de red en el nodo de red, hacemos que esta nueva
+interfaz sea la que de acceso al exterior mientras que la otra interconectará los nodos. Para ello copiamos la configuración de la interfaz existente a la nueva interfaz ```br-ex``` y la editamos.
+En el ``nodenetwork``:
 ```
 [root@network ~]# cd /etc/sysconfig/network-scripts/
 [root@network network-scripts]# cp ifcfg-enp0s3 ifcfg-br-ex
 [root@network network-scripts]# vi ifcfg-enp0s3
 ........................................
 DEVICE=enp1s0
-HWADDR=<la correspondiente>
 TYPE=OVSPort
 DEVICETYPE=ovs
 OVS_BRIDGE=br-ex
@@ -294,13 +299,14 @@ ONBOOT=yes
 ```
 
 Acabada la edición, pasamos a reiniciar el servicio de red.
+En el `nodenetwork`:
 ```
-[root@network network-scripts]# systemctl restart network
+[root@network ~]# systemctl restart network
 ```
 
 ### Acceder a la interfaz web
 
-Para chequear que todo se instaló correctamente accedemos al ```dashboard```, por lo que escribimos en el navegador la ip del nodo de control(nodecontroller)
+Accedemos al `dashboard` escribiendo en nuestro navegador web la IP correspondiente al ``nodecontroller``.
 
 ```
 https://192.168.10.150/dashboard
@@ -308,8 +314,11 @@ https://192.168.10.150/dashboard
 
 ### Crear proyectos y añadir usuarios
 
-Para crear un proyecto y añadir usuarios en OpenStack lo podemos hacer de dos formas, mediante terminal o interfaz.
-Para poder ejecutar el comando ```openstack``` y usar los parámetros y comandos que ofrece, hay que ejecutar ```keystoneadminrc``` para ello lanzamos ```source keystoneadminrc``` y para poder hacer luego acciones propias del admin desde la linea de comandos ejecutamos los siguientes comandos:
+Para crear un proyecto y añadir usuarios en OpenStack tenemos dos métodos: mediante la línea de comandos o mediante la interfaz.
+
+Si elegimos la primera opción, tendremos que hacer ``source`` del fichero ``keystoneadminrc``. Para ello ejecutamos en ``nodecontroller`` el siguiente comando: ``source keystoneadminrc``.
+
+Una vez hecho esto, deberemos cargar una serie de variables que servirán para autenticarnos contra OpenStack y poder ejecutar comandos propios sin problema. Así pues, añadimos el siguiente contenido a un fichero ``.sh``, lo guardamos y volvemos a hacerle ``source`` con ``source credenciales.sh``.
 
 ```
 export OS_USERNAME=admin
@@ -320,12 +329,10 @@ export OS_PROJECT_DOMAIN_NAME=Default
 export OS_AUTH_URL=http://nodecontroller:<port>/v3
 export OS_IDENTITY_API_VERSION=3
 ```
-
-Estos comandos almacenan las credenciales para hacer las operaciones de admin, "logeandonos" desde la terminal. Para una mayor comodidad estos se pueden almacenar en un script y lanzar el script cuando se necesite sin necesidad de estar ejecutándolo uno a uno. Si creamos el script y le ponemos de nombre ```credenciales.sh``` y guardamos ahí las variables. La ejecución de este script se hace con ```. credenciales.sh```.
-En caso de que haya alguna duda sobre estas credenciales, nos podemos descargar un fichero que trae OpenStack con toda esta información almacenada. Esta información se puede obtener desde el dashboard y accediendo a Proyecto->Compute->Acceso y seguridad y ```Fichero RC de OpenStack v3 o v2``` según el caso.
+En caso de que tengamos alguna duda sobre estas credenciales, nos podemos descargar uno ya creado desde nuestra interfaz web. Para ello accedemos a  Proyecto&rightarrow;Compute&rightarrow;Acceso y seguridad y ``Fichero RC de OpenStack v3 o v2`` según el caso.
 
 Desde interfaz:
-- Nos logeamos en el dashboard con las credenciales del admin y accedemos en el menú situado a la izquierda a Identidad->Proyectos-> y clickamos en crear proyecto
+- Nos logeamos en el dashboard con las credenciales del admin y accedemos en el menú situado a la izquierda a Identidad&rightarrow;Proyectos&rightarrow; y clickamos en crear proyecto
 
 Desde terminal:
 ```
@@ -335,7 +342,7 @@ openstack project create --domain default --description "Proyecto demo" demo
 Para crear usuarios
 
 Desde interfaz:
-- Con el mismo login de admin. Vamos a Identidad->Usuarios->Crear usuario. Rellenamos los parámetros que se pidan, en mi caso solo rellenamos los campos obligatorios y asociamos el usuario al proyecto que deseemos.
+- Con el mismo login de admin. Vamos a Identidad&rightarrow;Usuarios&rightarrow;Crear usuario. Rellenamos los parámetros que se pidan, en mi caso solo rellenamos los campos obligatorios y asociamos el usuario al proyecto que deseemos.
 
 Desde terminal:
 ```
@@ -356,7 +363,7 @@ Comprobamos en el nodo de control (``controller``) el espacio que hay disponible
 
 ```
 [root@controller ]# vgs
-  VG             #PV #LV #SN Attr   VSize  VFree 
+  VG             #PV #LV #SN Attr   VSize  VFree
   cinder-volumes   1   1   0 wz--n- 20.60g 10.60g
 ```
 
@@ -401,11 +408,11 @@ Comprobamos que se ha añadido el espacio a CINDER:
   cinder-volumes   2   1   0 wz--n- 320.59g 310.59g
 ```
 
-Si no has configurado en ``packstack`` cuales son los servidores de almacenamiento o dónde está CINDER y el tamaño, puedes hacerlo en la instalación indicando qué servidores estarán disponibles para usar espacio de almacenamiento para CINDER.
+Si no has configurado en ``packstack`` cuáles son los servidores de almacenamiento o dónde está CINDER y el tamaño, puedes hacerlo en la instalación indicando qué servidores estarán disponibles para usar espacio de almacenamiento para CINDER.
 
 
 
-# Afinar la instalación de OpenNebula
+# Afinar la instalación de OpenStack
 
 ## Añadir más nodos de almacenamiento con CINDER
 
@@ -415,6 +422,3 @@ Si no has configurado en ``packstack`` cuales son los servidores de almacenamien
 
 
 # Referencias
-
-
-
