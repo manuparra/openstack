@@ -227,11 +227,12 @@ Si has conectado correctamente, este paso está bien realizado.
 
 ### Habilitar el repositorio de RDO e instalar PackStack
 
-Con los siguientes comandos añadiremos a nuestro sistema el repositorio de RDO, donde se encuentra PackStack, y lo instalaremos:
+Con los siguientes comandos añadiremos a nuestro sistema el paquete RPM de RDO, donde se encuentra PackStack, y lo instalaremos:
 
-Serán ejecutados en ``nodecontroller``:
+Serán ejecutados en ``nodecontroller`` (esto instalará la versión de OpenStack Newton [9.0.1] ):
+
 ```
-[root@nodecontroller ]# yum install -y https://www.rdoproject.org/repos/rdo-release.rpm
+[root@nodecontroller ]# yum install -y https://repos.fedorapeople.org/repos/openstack/openstack-newton/rdo-release-newton-4.noarch.rpm
 [root@nodecontroller ]# yum install -y openstack-packstack
 ```
 ### Generar y personalizar el fichero de instalación
