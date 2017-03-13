@@ -215,6 +215,7 @@ En el ``nodecontroller``:
 [root@nodecontroller ]# ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.10.152
 ```
 
+
 Hecho esto, chequea que puedes conectarte con SSH a cada uno de los nodos sin que pida la clave por teclado:
 
 ```
