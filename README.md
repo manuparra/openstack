@@ -77,6 +77,8 @@ Neutron L3 agent
 
 ## Instalación con RDO y PackStack
 
+NOTA: Este tutorial esta orientado a la instalación de packstack 9.0.1. Decimos esto porque con las últimas actualizaciones hechas por los desarroladores de packstack, actualmente la 10.0.0, se dan algunos problemas de instalación y hasta que esta no sea estable este manual no será de gran ayuda.
+
 ### Actualización de paquetes en CentOS 7
 
 Una vez configurados los nodos con su IP correspondiente y validado el acceso a Internet de los mismos, pasamos a realizar un ``update`` para cada nodo: 
@@ -275,7 +277,46 @@ openstack user create --domain default --password-prompt demo
 
 #### Crear un "sabor" e imagen
 
+
 #### Crear la red y el router del proyecto
+
+Para la creación de la red hay que loguearse con un usuario, por ejemplo, el que hemos creado anteriormente. Se tienen que configurar dos redes (interna y externa), la interna será la red que se encargará de asignar entre las máquinas la IP y la externa será através de la que saldrá al exterior(a Internet). Para la creación de la red interna ```Proyecto -> Redes -> Crear red```. Esta sería la configuración:
+```
+Nombre de la red: red interna
+Estado de administracion: Arriba
+Crear Subred: Marcado
+Nombre de Subred: subred-interna
+Direcciones de red: 10.10.0.0/24
+Version IP: IPv4
+IP de la Puerta de Enlace: 10.10.0.1
+DHCP: Habilitado
+```
+La IP proporcionada en esta red puede ser aleatoria total ya que va a ser la red interna.
+
+Para la creación de la red externa hacemos lo mismo que hemos hecho con la red interna ```Proyecto->Redes->Crear Red```
+
+```
+Nombre de la red: red externa
+Estado de administracion: Arriba
+Crear Subred: Marcado
+Nombre de Subred: subred-externa
+Direcciones de red: 192.168.10.0/24
+Version IP: IPv4
+IP de la Puerta de Enlace: 192.168.10.1
+DHCP: Habilitado
+```
+Para saber la GATEWAY podemos ver el fichero ```br-ex``` que modificamos unos pasos atrás. Dado que estamos creando la red externa que será la que de acceso hacia afuera en las MVS, la puerta de enlace debe de ser la misma que la configurada en el fichero ```br-ex``` y la IP en un rango de éste. 
+
+Una vez hecho todo esto desde el usuario, tenemos que marcar la Red Externa como Externa. Nos deslogeamos del usuario y nos logeamos como admin y accedemos a ```Admin->Sistema->Redes```, pulsamos la Red Externa creada y marcamos el cuadrado de ```red externa```.
+
+Establecida la red desde el administrador como externa, nos volvemos a logear con el usuario y pasamos a crear el router para conectar nuestras dos redes y poder enviar y recibir paquetes. Accedemos a ```Proyecto->Red->Routers```
+
+```
+Nombre del Router: <Nombre del router>
+Estado de administracion: Arriba
+Red Externa: red externa 
+```
+Una vez creado el router debemos de ser capaces de verlo en el ```dashboard``` del router. Pinchamos en el router que hemos añadido y clickamos en ```Añadir interfaz```. Seleccionamos la subred interna, en nuestro caso ```subred-interna```, el resto de datos no es necesario añadirlos por lo que los dejamos en blanco y guardamos. Hecho todo esto ya estaría la red lista
 
 #### Añadir grupos de seguridad y claves
 
