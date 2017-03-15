@@ -269,8 +269,15 @@ En el ``nodecontroller``:
 ```
 [root@controller ~]# packstack --answer-file=/root/instalacion.txt
 ```
+En la figura vemos cómo ha finalizado correctamente la instalación.
+![install_001](https://github.com/manuparra/openstack/blob/master/imgs/img_001.png?raw=true)
+
 Una vez realizada la instalación sin ningún error podremos ver como se ha
-creado una nueva interfaz de red en el nodo de red (``nodenetwork``), llamada ``br-ex``. Ésta se puede ver ejecutando ``ifconfig -a``. Una vez comprobado
+creado una nueva interfaz de red en el nodo de red (``nodenetwork``), llamada ``br-ex``. Ésta se puede ver ejecutando ``ifconfig -a`` como muestra la imagen.
+
+![install_002](https://github.com/manuparra/openstack/blob/master/imgs/img_002.png?raw=true)
+
+Una vez comprobado
 que realmente está la interfaz de red en el nodo de red, hacemos que esta nueva
 interfaz sea la que de acceso al exterior mientras que la otra interconectará los nodos. Para ello copiamos la configuración de la interfaz existente a la nueva interfaz ```br-ex``` y la editamos.
 En el ``nodenetwork``:
@@ -306,7 +313,8 @@ En el `nodenetwork`:
 ```
 [root@network ~]# systemctl restart network
 ```
-
+Comprobamos que todos los cambios han surtido efecto ejecutando de nuevo ``ifconfig``.
+![install_003](https://github.com/manuparra/openstack/blob/master/imgs/img_003.png?raw=true)
 ### Acceder a la interfaz web
 
 Accedemos al `dashboard` escribiendo en nuestro navegador web la IP correspondiente al ``nodecontroller``.
@@ -314,6 +322,11 @@ Accedemos al `dashboard` escribiendo en nuestro navegador web la IP correspondie
 ```
 https://192.168.10.150/dashboard
 ```
+![install_004](https://github.com/manuparra/openstack/blob/master/imgs/img_004.png?raw=true)
+
+Parece que la instalación se ha completado sin incidencias.
+
+![install_005](https://github.com/manuparra/openstack/blob/master/imgs/img_005.png?raw=true)
 
 ### Crear proyectos y añadir usuarios
 
@@ -336,7 +349,7 @@ En caso de que tengamos alguna duda sobre estas credenciales, nos podemos descar
 
 Desde interfaz:
 - Nos logeamos en el dashboard con las credenciales del admin y accedemos en el menú situado a la izquierda a Identidad&rightarrow;Proyectos&rightarrow; y clickamos en crear proyecto
-
+![install_006](https://github.com/manuparra/openstack/blob/master/imgs/img_006.png?raw=true)
 Desde terminal:
 ```
 openstack project create --domain default --description "Proyecto demo" demo
@@ -346,7 +359,7 @@ Para crear usuarios
 
 Desde interfaz:
 - Con el mismo login de admin. Vamos a Identidad&rightarrow;Usuarios&rightarrow;Crear usuario. Rellenamos los parámetros que se pidan, en mi caso solo rellenamos los campos obligatorios y asociamos el usuario al proyecto que deseemos.
-
+![install_007](https://github.com/manuparra/openstack/blob/master/imgs/img_007.png?raw=true)
 Desde terminal:
 ```
 openstack user create --domain default --password-prompt demo
@@ -354,8 +367,23 @@ openstack user create --domain default --password-prompt demo
 
 #### Crear un "sabor" e imagen
 
+Para crear un "sabor" nos dirigimos a la pestaña Admin&rightarrow;Flavors&rightarrow;
+ y hacemos *click* en *Create flavor*
+![install_008](https://github.com/manuparra/openstack/blob/master/imgs/img_008.png?raw=true)
 
-#### Crear la red y el router del proyecto
+Especificamos el nombre que tendrá, las VCPU, el *Root Disk*, el *Ephemeral Disk* y el *Swap*.
+
+![install_009](https://github.com/manuparra/openstack/blob/master/imgs/img_009.png?raw=true)
+
+Para crear una imagen nos dirigimos esta vez a Admin&rightarrow;Images&rightarrow;  y hacemos *click* en *Create image*.
+
+Especificamos el nombre, la ruta donde tenemos dicha imagen descargada y el formato, en el caso mostrado QCOW2.
+
+![install_010](https://github.com/manuparra/openstack/blob/master/imgs/img_010.png?raw=true)
+
+Con esto ya tendríamos nuestra imagen disponible para ser usada.
+
+ #### Crear la red y el router del proyecto
 
 Para la creación de la red hay que loguearse con un usuario, por ejemplo, el que hemos creado anteriormente. Se tienen que configurar dos redes (interna y externa), la interna será la red que se encargará de asignar entre las máquinas la IP y la externa será através de la que saldrá al exterior(a Internet). Para la creación de la red interna ```Proyecto -> Redes -> Crear red```. Esta sería la configuración:
 ```
@@ -382,7 +410,7 @@ Version IP: IPv4
 IP de la Puerta de Enlace: 192.168.10.1
 DHCP: Habilitado
 ```
-Para saber la GATEWAY podemos ver el fichero ```br-ex``` que modificamos unos pasos atrás. Dado que estamos creando la red externa que será la que de acceso hacia afuera en las MVS, la puerta de enlace debe de ser la misma que la configurada en el fichero ```br-ex``` y la IP en un rango de éste. 
+Para saber la GATEWAY podemos ver el fichero ```br-ex``` que modificamos unos pasos atrás. Dado que estamos creando la red externa que será la que de acceso hacia afuera en las MVS, la puerta de enlace debe de ser la misma que la configurada en el fichero ```br-ex``` y la IP en un rango de éste.
 
 Una vez hecho todo esto desde el usuario, tenemos que marcar la Red Externa como Externa. Nos deslogeamos del usuario y nos logeamos como admin y accedemos a ```Admin->Sistema->Redes```, pulsamos la Red Externa creada y marcamos el cuadrado de ```red externa```.
 
@@ -391,7 +419,7 @@ Establecida la red desde el administrador como externa, nos volvemos a logear co
 ```
 Nombre del Router: <Nombre del router>
 Estado de administracion: Arriba
-Red Externa: red externa 
+Red Externa: red externa
 ```
 Una vez creado el router debemos de ser capaces de verlo en el ```dashboard``` del router. Pinchamos en el router que hemos añadido y clickamos en ```Añadir interfaz```. Seleccionamos la subred interna, en nuestro caso ```subred-interna```, el resto de datos no es necesario añadirlos por lo que los dejamos en blanco y guardamos. Hecho todo esto ya estaría la red lista
 
