@@ -76,7 +76,10 @@ Con esto ya tendríamos nuestra imagen disponible para ser usada.
 
  #### Crear la red y el router del proyecto
 
-Para la creación de la red hay que loguearse con un usuario, por ejemplo, el que hemos creado anteriormente. Se tienen que configurar dos redes (interna y externa), la interna será la red que se encargará de asignar entre las máquinas la IP y la externa será através de la que saldrá al exterior(a Internet). Para la creación de la red interna ```Proyecto -> Redes -> Crear red```. Esta sería la configuración:
+Para la creación de la red hay que loguearse con un usuario, por ejemplo, el que hemos creado anteriormente. Se tienen que configurar dos redes (interna y externa), la interna será la red que se encargará de asignar entre las máquinas la IP y la externa será através de la que saldrá al exterior(a Internet). Para la creación de la red interna ```Proyecto -> Redes -> Crear red```.
+![install_011](https://github.com/manuparra/openstack/blob/master/imgs/img_011.png?raw=true)
+
+Esta sería la configuración:
 ```
 Nombre de la red: red interna
 Estado de administracion: Arriba
@@ -88,10 +91,9 @@ IP de la Puerta de Enlace: 10.10.0.1
 DHCP: Habilitado
 ```
 La IP proporcionada en esta red puede ser aleatoria total ya que va a ser la red interna.
-
+![install_012](https://github.com/manuparra/openstack/blob/master/imgs/img_012.png?raw=true)
 Para la creación de la red externa hacemos lo mismo que hemos hecho con la red interna ```Proyecto->Redes->Crear Red```
-
-```
+![install_013](https://github.com/manuparra/openstack/blob/master/imgs/img_013.png?raw=true)
 Nombre de la red: red externa
 Estado de administracion: Arriba
 Crear Subred: Marcado
@@ -102,9 +104,10 @@ IP de la Puerta de Enlace: 192.168.10.1
 DHCP: Habilitado
 ```
 Para saber la GATEWAY podemos ver el fichero ```br-ex``` que modificamos unos pasos atrás. Dado que estamos creando la red externa que será la que de acceso hacia afuera en las MVS, la puerta de enlace debe de ser la misma que la configurada en el fichero ```br-ex``` y la IP en un rango de éste.
+![install_014](https://github.com/manuparra/openstack/blob/master/imgs/img_014.png?raw=true)
 
 Una vez hecho todo esto desde el usuario, tenemos que marcar la Red Externa como Externa. Nos deslogeamos del usuario y nos logeamos como admin y accedemos a ```Admin->Sistema->Redes```, pulsamos la Red Externa creada y marcamos el cuadrado de ```red externa```.
-
+![install_015](https://github.com/manuparra/openstack/blob/master/imgs/img_015.png?raw=true)
 Establecida la red desde el administrador como externa, nos volvemos a logear con el usuario y pasamos a crear el router para conectar nuestras dos redes y poder enviar y recibir paquetes. Accedemos a ```Proyecto->Red->Routers```
 
 ```
@@ -112,8 +115,9 @@ Nombre del Router: <Nombre del router>
 Estado de administracion: Arriba
 Red Externa: red externa
 ```
+![install_016](https://github.com/manuparra/openstack/blob/master/imgs/img_016.png?raw=true)
 Una vez creado el router debemos de ser capaces de verlo en el ```dashboard``` del router. Pinchamos en el router que hemos añadido y clickamos en ```Añadir interfaz```. Seleccionamos la subred interna, en nuestro caso ```subred-interna```, el resto de datos no es necesario añadirlos por lo que los dejamos en blanco y guardamos. Hecho todo esto ya estaría la red lista
-
+![install_017](https://github.com/manuparra/openstack/blob/master/imgs/img_017.png?raw=true)
 #### Añadir grupos de seguridad y claves
 
 ### Lanzar una instancia
