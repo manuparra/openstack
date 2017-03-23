@@ -121,6 +121,7 @@ Red Externa: red externa
 ![install_016](https://github.com/manuparra/openstack/blob/master/imgs/img_016.png?raw=true)
 Una vez creado el router debemos de ser capaces de verlo en el ```dashboard``` del router. Pinchamos en el router que hemos añadido y clickamos en ```Añadir interfaz```. Seleccionamos la subred interna, en nuestro caso ```subred-interna```, el resto de datos no es necesario añadirlos por lo que los dejamos en blanco y guardamos. Hecho todo esto ya estaría la red lista
 ![install_017](https://github.com/manuparra/openstack/blob/master/imgs/img_017.png?raw=true)
+```
 #### Añadir grupos de seguridad y claves
 
 ### Lanzar una instancia
