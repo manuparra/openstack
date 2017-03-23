@@ -103,6 +103,9 @@ Version IP: IPv4
 IP de la Puerta de Enlace: 192.168.10.1
 DHCP: Habilitado
 ```
+
+En caso de que queramos asignarle un rango de IP's especificos para las IP's flotantes, en la creacion de la subred le damos a la pestaña de ```Detalles de red``` y en ```Pools de asignación```le indicamos desde donde a donde queremos que asigne. En nuestro caso sería así ```192.168.10.210,192.168.10.220```.
+
 Para saber la GATEWAY podemos ver el fichero ```br-ex``` que modificamos unos pasos atrás. Dado que estamos creando la red externa que será la que de acceso hacia afuera en las MVS, la puerta de enlace debe de ser la misma que la configurada en el fichero ```br-ex``` y la IP en un rango de éste.
 ![install_014](https://github.com/manuparra/openstack/blob/master/imgs/img_014.png?raw=true)
 
@@ -121,3 +124,11 @@ Una vez creado el router debemos de ser capaces de verlo en el ```dashboard``` d
 #### Añadir grupos de seguridad y claves
 
 ### Lanzar una instancia
+
+Para la creación de una instancia primero necesitamos establecer las IPS flotantes que vamos a disponer. Nos logueamos con el usuario en la interfaz y accedemos a ```Proyecto -> Computo -> Acceso & Seguridad -> Floating IPs``` ahi definimos la cantidad de IP's que tendremos para las máquinas, dentro del rango definido en la creación de la subred como hemos indicado más arriba.
+
+Pasamos ya a lanzar la instancia, para ello necesitamos tener creadas las imagenes que queremos montar en las máquinas las cuales hemos creado previamente, unos pasos mas atrás en este manual. Con esto ya realizado, accedemos a ```Proyecto -> Computo -> Instancias``` y pinchamos en ```Lanzar Instancia```. En la interfaz que aparece le indicamos principalmente el nombre de la instancia y el número de instancias que deseamos, pasamos a la siguiente interfaz pinchando en Siguiente y comprobamos que en ```Seleccionar Origen de arranque``` este marcado ```Imagen```, ya que lo que vamos a montar es una imagen, en caso de que fuera un volumen, snapshot de instancia, etc pues se marca la que corresponda, además marcamos en ```SI``` para crear nuevo volumen y ```SI``` para ```Delete Volumen on Instance Delete``` ya que queremos que cuando borremos una instancia se borre el volumen también, si no quisieramos esto pues se marcaría como ```NO```. Asignamos los GB del volumen, los suficientes para que la imagen se pueda desplegar (suele ser alrededor de 10GB, aunque es dependiente de la imagen en cuestión) y ya por último seleccionamos la imagen, que esta en available, dandole a ```+````, pasando a estar como ```Asignados```. Accedemos a la siguiente interfaz necesaria para la instanciación de la imagen y aquí es donde seleccionamos la flavor, dado que hemos creado una especifica para este caso en los pasos anteriores pues le asignamos ésta ```tfg_flavor```. Pasamos a la siguiente interfaz y le asignamos la red externa pinchando otra vez más en el botón ```+``` y pinchamos en ```Lanzar instancia```.
+
+Pasados unos minutos y levantada la instancia bien le asignamos una IP flotante a la máquina, pinchamos en la flecha de ```Crear instantánea``` y le damos a ```Asociar IP Flotante```, aparecerá una pequeña interfaz donde se veran las IP's disponibles para su uso y seleccionamos la que queramos y la asociamos.
+
+Comprobamos que la maquina se ha levantado bien, para ello abrimos una terminal y desde el nodo de control por ejemplo le hacemos ping a la IP asignada por la ```IP Flotante``` y nos conectamos por SSH el cual ya comentaremos mas adelante.
