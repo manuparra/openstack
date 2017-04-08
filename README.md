@@ -3,7 +3,7 @@
 
 # Instalación y despliegue de OpenStack
 
-Manual completo y funcional de instalación, despliegue y uso de OpenStack en modo MULTI-NODO sobre CentOS7 con RDO. Este manual se ha desarrollado para poner en producción un cluster completo con todos los servicios de OpenStack, desde la instalación básica hasta aspectos más complejos de despliegue, uso y automatización.
+Manual completo y funcional de instalación, despliegue y uso de OpenStack en modo MULTI-NODO sobre CentOS7 con RDO para la versión de OpenStack **NEWTON**. Este manual se ha desarrollado para poner en producción un cluster completo con todos los servicios de OpenStack, desde la instalación básica hasta aspectos más complejos de despliegue, uso y automatización.
 
 En este tutorial cubre los siguientes aspectos:
 
@@ -74,7 +74,7 @@ Características de los nodos
 - 2 HD con 2TB cada uno.
 - 4 tarjetas de red y 1 Infiniband, pero sólo se usará una de ellas.
 
-La instalación mínima es admitible es:
+La **instalación mínima** admitible tiene que tener la siguiente configuración de los nodos:
 
 - 8 cores
 - 8 GB de RAM
@@ -107,7 +107,7 @@ OS         	:CentOS 7
 DNS  		:192.168.10.10
 ```
 
-*En DNS, usamos el servidor de nombres de dominio que exista en la propia red.*
+*En DNS, usamos el servidor de nombres de dominio que exista en la propia red. En nuestro caso ``192.168.10.10`` *
 
 ## Qué se instalará en cada nodo
 
@@ -131,24 +131,24 @@ Neutron L3 agent
 
 ## Instalación con RDO y PackStack
 
-NOTA: Este tutorial esta orientado a la instalación de packstack 9.0.1. Decimos esto porque con las últimas actualizaciones hechas por los desarroladores de packstack, actualmente la 10.0.0, se dan algunos problemas de instalación y hasta que esta no sea estable este manual no será de gran ayuda.
+NOTA: Este tutorial esta orientado a la instalación de packstack 9.0.1. (que corresponde a OpenStack NEWTON). Hay que tener en cuenta que si se instala packstack por defecto tomará la última versión disponible del repositorio (Actualmente la 10.0.0 que corresponde con OpenStack OCATA).
 
 
 ### Actualización de fichero hosts
 
 Una vez configurados los nodos con su IP correspondiente y validado el acceso a Internet de los mismos, fijamos el nombre de cada uno de los nodos (``hostname``):
 
-Para el nodo controlador (IP: 192.168.6.50), ponemos el nombre:
+Para el nodo controlador (IP: 192.168.6.150), ponemos el nombre:
 ```
 hostnamectl set-hostname nodecontroller
 ```
 
-Para el nodo de computo (IP: 192.168.6.51), ponemos el nombre:
+Para el nodo de computo (IP: 192.168.6.151), ponemos el nombre:
 ```
 hostnamectl set-hostname nodecompute
 ```
 
-Para el nodo de red (IP: 192.168.6.52), ponemos el nombre:
+Para el nodo de red (IP: 192.168.6.152), ponemos el nombre:
 ```
 hostnamectl set-hostname nodenetwork
 ```
@@ -161,7 +161,7 @@ Y añadimos el siguiente esquema en ``/etc/hosts`` en cada uno de los nodos :
 192.168.10.152 nodenetwork.dicits.es    nodenetwork
 ```
 
-*En lugar de ``.dicits.es`` puedes poner algo como ``miorganizacion.com`` o similar*
+*En lugar de ``.dicits.es`` puedes poner algo como ``miorganizacion.com`` o similar que corresponda a tu organización*
 
 
 ### Actualización de paquetes en CentOS 7
@@ -192,7 +192,7 @@ systemctl stop NetworkManager
 systemctl disable NetworkManager
 ```
 
-Una vez hechos los cambios reinicar de nuevo los tres nodos:
+Una vez hechos los cambios es necesario reinicar de nuevo los tres nodos:
 
 ```
 reboot
@@ -200,9 +200,9 @@ reboot
 
 ### Configurar SSH passwordless desde el nodo de control a los demás.
 
-Esto es importante, ya que permite que, entre los nodos, se pueda conectar con SSH sin utilizar la clave. En este caso lo que se usa es la clave pública, para autenticar dentro del grupo de nodos que tenemos:
+Esto es importante, ya que permite que, entre los nodos, se pueda conectar con SSH sin utilizar la clave. En este caso lo que se usa es la clave pública, para autenticar dentro del grupo de nodos que tenemos (y además es requerido por packstack para poder hacer la instalación):
 
-En el ``nodecontroller``:
+En el ``nodecontroller`` (cuando el comando ``ssh-keygen`` pida clave, dejala en blanco):
 
 ```
 [root@nodecontroller ]# ssh-keygen
@@ -218,11 +218,11 @@ Hecho esto, chequea que puedes conectarte con SSH a cada uno de los nodos sin qu
 [root@nodecompute ~]#
 ```
 
-Si has conectado correctamente, este paso está bien realizado.
+Si has conectado correctamente, este paso está bien realizado. En caso contrario vuelve a repetirlo.
 
 ### Habilitar el repositorio de RDO e instalar PackStack
 
-Con los siguientes comandos añadiremos a nuestro sistema el paquete RPM de RDO, donde se encuentra PackStack, y lo instalaremos:
+Con los siguientes comandos añadiremos a nuestro sistema el paquete RPM de RDO, donde se encuentra PackStack 9.0.1 (OpenStack NEWTON), y lo instalaremos:
 
 Serán ejecutados en ``nodecontroller`` (esto instalará la versión de OpenStack Newton [9.0.1] ):
 
@@ -235,11 +235,15 @@ Serán ejecutados en ``nodecontroller`` (esto instalará la versión de OpenStac
 Con el siguiente comando generaremos el fichero de instalación ("Answer File" según PackStack).
 
 En el ``nodecontroller``:
+
 ```
 [root@nodecontroller ]# packstack --gen-answer-file=/root/instalacion.txt
 ```
+
 Editaremos este fichero modificando las opciones que nos interesen. Para esta instalación añadiremos las IP de nuestros nodos, desactivaremos la demostración, desactivaremos Ceilometer, añadiremos un servidor para NTP y cambiaremos las contraseñas de los servicios que nos interesen.
-En el ``nodecontroller``:
+
+
+En el ``nodecontroller`` abrir el fichero ``/root/instalacion.txt`` y buscar y cambiar las siguientes directivas:
 ```
 [root@controller ~]# vi /root/instalacion.txt
 ........................................
@@ -253,16 +257,18 @@ CONFIG_NTP_SERVERS= 1.es.pool.ntp.org
 CONFIG_KEYSTONE_ADMIN_PW= <contraseña>
 ..........................................
 ```
-El servidor NTP deberá ser el propio de nuestra región.
+El servidor NTP deberá ser el propio de nuestra región, por ejemplo ``hora.ugr.es``.
 
 ### Instalar OpenStack
 
 Una vez editado el fichero de configuración ```/root/instalacion.txt``` pasamos
 a realizar la instalación de OpenStack con PackStack. Para ello lanzamos el siguiente comando:
 En el ``nodecontroller``:
+
 ```
 [root@controller ~]# packstack --answer-file=/root/instalacion.txt
 ```
+
 En la figura vemos cómo ha finalizado correctamente la instalación.
 ![install_001](https://github.com/manuparra/openstack/blob/master/imgs/img_001.png?raw=true)
 
