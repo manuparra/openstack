@@ -29,7 +29,7 @@ Una vez hecho esto, deberemos cargar una serie de variables que servirán para a
 
 ```
 export OS_USERNAME=admin
-export OS_PASSWORD=<contraseña admin>
+export OS_PASSWORD=<clave de admin>
 export OS_PROJECT_NAME=<nombre proyecto>
 export OS_USER_DOMAIN_NAME=Default
 export OS_PROJECT_DOMAIN_NAME=Default
