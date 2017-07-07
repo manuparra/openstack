@@ -48,6 +48,7 @@ Contenido
    * [Afinar la instalación de OpenStack](#afinar-la-instalación-de-openstack)
       * [Añadir más nodos de almacenamiento con CINDER](#añadir-más-nodos-de-almacenamiento-con-cinder)
       * [Añadir más nodos de RED (network)](#añadir-más-nodos-de-red-network)
+      * [Habilitar DataProcessing con Sahara](#habilitar-dataprocessing-sahara)	  
    * [ Referencias](#referencias)
 
 
@@ -460,6 +461,49 @@ Si no has configurado en ``packstack`` cuáles son los servidores de almacenamie
 
 
 ## Añadir más nodos de RED (network)
+
+## Habilitar DataProcessing con Sahara en Horizon
+
+Primero hay que instalar el paquete siguiente:
+
+```
+pip install sahara-dashboard
+```
+
+Una vez hecho esto, cambiar la configuración de `Horizon`:
+
+```
+vi /usr/share/openstack-dashboard/openstack_dashboard/settings.py
+```
+
+y añadir a la sección ``INSTALLED_APPS`` el valor `saharadashboard`: 
+
+```
+INSTALLED_APPS = [
+    'openstack_dashboard',
+    'django.contrib.contenttypes',
+    'django.contrib.auth',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.humanize',
+    'django_pyscss',
+    'openstack_dashboard.django_pyscss_fix',
+    'compressor',
+    'horizon',
+    'openstack_auth',
+    'saharadashboard',
+]
+```
+
+Finalmente reiniciar apache:
+
+```
+service httpd restart
+```
+
+
+
 
 
 
