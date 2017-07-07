@@ -3,7 +3,7 @@
 
 # Instalación y despliegue de OpenStack
 
-Manual completo y funcional de instalación, despliegue y uso de OpenStack en modo MULTI-NODO sobre CentOS7 con RDO. Este manual se ha desarrollado para poner en producción un cluster completo con todos los servicios de OpenStack, desde la instalación básica hasta aspectos más complejos de despliegue, uso y automatización.
+Manual completo y funcional de instalación, despliegue y uso de OpenStack en modo MULTI-NODO sobre CentOS7 con RDO para la versión de OpenStack **NEWTON**. Este manual se ha desarrollado para poner en producción un cluster completo con todos los servicios de OpenStack, desde la instalación básica hasta aspectos más complejos de despliegue, uso y automatización.
 
 En este tutorial cubre los siguientes aspectos:
 
@@ -38,12 +38,6 @@ Contenido
          * [Habilitar el repositorio de RDO e instalar PackStack](#habilitar-el-repositorio-de-rdo-e-instalar-packstack)
          * [Generar y personalizar el fichero de instalación](#generar-y-personalizar-el-fichero-de-instalación)
          * [Instalar OpenStack](#instalar-openstack)
-         * [Acceder a la interfaz web](#acceder-a-la-interfaz-web)
-         * [Crear proyectos y añadir usuarios](#crear-proyectos-y-añadir-usuarios)
-            * [Crear un "sabor" e imagen](#crear-un-sabor-e-imagen)
-            * [Crear la red y el router del proyecto](#crear-la-red-y-el-router-del-proyecto)
-            * [Añadir grupos de seguridad y claves](#añadir-grupos-de-seguridad-y-claves)
-         * [Lanzar una instancia](#lanzar-una-instancia)
       * [Añadiendo espacio a CINDER](#añadiendo-espacio-a-cinder)
    * [Afinar la instalación de OpenStack](#afinar-la-instalación-de-openstack)
       * [Añadir más nodos de almacenamiento con CINDER](#añadir-más-nodos-de-almacenamiento-con-cinder)
@@ -81,7 +75,7 @@ Características de los nodos
 - 2 HD con 2TB cada uno.
 - 4 tarjetas de red y 1 Infiniband, pero sólo se usará una de ellas.
 
-La instalación mínima es admitible es:
+La **instalación mínima** admitible tiene que tener la siguiente configuración de los nodos:
 
 - 8 cores
 - 8 GB de RAM
@@ -114,7 +108,7 @@ OS         	:CentOS 7
 DNS  		:192.168.10.10
 ```
 
-*En DNS, usamos el servidor de nombres de dominio que exista en la propia red.*
+*En DNS, usamos el servidor de nombres de dominio que exista en la propia red. En nuestro caso ``192.168.10.10`` *
 
 ## Qué se instalará en cada nodo
 
@@ -138,24 +132,24 @@ Neutron L3 agent
 
 ## Instalación con RDO y PackStack
 
-NOTA: Este tutorial esta orientado a la instalación de packstack 9.0.1. Decimos esto porque con las últimas actualizaciones hechas por los desarroladores de packstack, actualmente la 10.0.0, se dan algunos problemas de instalación y hasta que esta no sea estable este manual no será de gran ayuda.
+NOTA: Este tutorial esta orientado a la instalación de packstack 9.0.1. (que corresponde a OpenStack NEWTON). Hay que tener en cuenta que si se instala packstack por defecto tomará la última versión disponible del repositorio (Actualmente la 10.0.0 que corresponde con OpenStack OCATA).
 
 
 ### Actualización de fichero hosts
 
 Una vez configurados los nodos con su IP correspondiente y validado el acceso a Internet de los mismos, fijamos el nombre de cada uno de los nodos (``hostname``):
 
-Para el nodo controlador (IP: 192.168.6.50), ponemos el nombre:
+Para el nodo controlador (IP: 192.168.6.150), ponemos el nombre:
 ```
 hostnamectl set-hostname nodecontroller
 ```
 
-Para el nodo de computo (IP: 192.168.6.51), ponemos el nombre:
+Para el nodo de computo (IP: 192.168.6.151), ponemos el nombre:
 ```
 hostnamectl set-hostname nodecompute
 ```
 
-Para el nodo de red (IP: 192.168.6.52), ponemos el nombre:
+Para el nodo de red (IP: 192.168.6.152), ponemos el nombre:
 ```
 hostnamectl set-hostname nodenetwork
 ```
@@ -168,7 +162,7 @@ Y añadimos el siguiente esquema en ``/etc/hosts`` en cada uno de los nodos :
 192.168.10.152 nodenetwork.dicits.es    nodenetwork
 ```
 
-*En lugar de ``.dicits.es`` puedes poner algo como ``miorganizacion.com`` o similar*
+*En lugar de ``.dicits.es`` puedes poner algo como ``miorganizacion.com`` o similar que corresponda a tu organización*
 
 
 ### Actualización de paquetes en CentOS 7
@@ -199,7 +193,7 @@ systemctl stop NetworkManager
 systemctl disable NetworkManager
 ```
 
-Una vez hechos los cambios reinicar de nuevo los tres nodos:
+Una vez hechos los cambios es necesario reinicar de nuevo los tres nodos:
 
 ```
 reboot
@@ -207,9 +201,9 @@ reboot
 
 ### Configurar SSH passwordless desde el nodo de control a los demás.
 
-Esto es importante, ya que permite que, entre los nodos, se pueda conectar con SSH sin utilizar la clave. En este caso lo que se usa es la clave pública, para autenticar dentro del grupo de nodos que tenemos:
+Esto es importante, ya que permite que, entre los nodos, se pueda conectar con SSH sin utilizar la clave. En este caso lo que se usa es la clave pública, para autenticar dentro del grupo de nodos que tenemos (y además es requerido por packstack para poder hacer la instalación):
 
-En el ``nodecontroller``:
+En el ``nodecontroller`` (cuando el comando ``ssh-keygen`` pida clave, dejala en blanco):
 
 ```
 [root@nodecontroller ]# ssh-keygen
@@ -225,11 +219,11 @@ Hecho esto, chequea que puedes conectarte con SSH a cada uno de los nodos sin qu
 [root@nodecompute ~]#
 ```
 
-Si has conectado correctamente, este paso está bien realizado.
+Si has conectado correctamente, este paso está bien realizado. En caso contrario vuelve a repetirlo.
 
 ### Habilitar el repositorio de RDO e instalar PackStack
 
-Con los siguientes comandos añadiremos a nuestro sistema el paquete RPM de RDO, donde se encuentra PackStack, y lo instalaremos:
+Con los siguientes comandos añadiremos a nuestro sistema el paquete RPM de RDO, donde se encuentra PackStack 9.0.1 (OpenStack NEWTON), y lo instalaremos:
 
 Serán ejecutados en ``nodecontroller`` (esto instalará la versión de OpenStack Newton [9.0.1] ):
 
@@ -242,11 +236,15 @@ Serán ejecutados en ``nodecontroller`` (esto instalará la versión de OpenStac
 Con el siguiente comando generaremos el fichero de instalación ("Answer File" según PackStack).
 
 En el ``nodecontroller``:
+
 ```
 [root@nodecontroller ]# packstack --gen-answer-file=/root/instalacion.txt
 ```
+
 Editaremos este fichero modificando las opciones que nos interesen. Para esta instalación añadiremos las IP de nuestros nodos, desactivaremos la demostración, desactivaremos Ceilometer, añadiremos un servidor para NTP y cambiaremos las contraseñas de los servicios que nos interesen.
-En el ``nodecontroller``:
+
+
+En el ``nodecontroller`` abrir el fichero ``/root/instalacion.txt`` y buscar y cambiar las siguientes directivas:
 ```
 [root@controller ~]# vi /root/instalacion.txt
 ........................................
@@ -260,18 +258,27 @@ CONFIG_NTP_SERVERS= 1.es.pool.ntp.org
 CONFIG_KEYSTONE_ADMIN_PW= <contraseña>
 ..........................................
 ```
-El servidor NTP deberá ser el propio de nuestra región.
+El servidor NTP deberá ser el propio de nuestra región, por ejemplo ``hora.ugr.es``.
 
 ### Instalar OpenStack
 
 Una vez editado el fichero de configuración ```/root/instalacion.txt``` pasamos
 a realizar la instalación de OpenStack con PackStack. Para ello lanzamos el siguiente comando:
 En el ``nodecontroller``:
+
 ```
 [root@controller ~]# packstack --answer-file=/root/instalacion.txt
 ```
+
+En la figura vemos cómo ha finalizado correctamente la instalación.
+![install_001](https://github.com/manuparra/openstack/blob/master/imgs/img_001.png?raw=true)
+
 Una vez realizada la instalación sin ningún error podremos ver como se ha
-creado una nueva interfaz de red en el nodo de red (``nodenetwork``), llamada ``br-ex``. Ésta se puede ver ejecutando ``ifconfig -a``. Una vez comprobado
+creado una nueva interfaz de red en el nodo de red (``nodenetwork``), llamada ``br-ex``. Ésta se puede ver ejecutando ``ifconfig -a`` como muestra la imagen.
+
+![install_002](https://github.com/manuparra/openstack/blob/master/imgs/img_002.png?raw=true)
+
+Una vez comprobado
 que realmente está la interfaz de red en el nodo de red, hacemos que esta nueva
 interfaz sea la que de acceso al exterior mientras que la otra interconectará los nodos. Para ello copiamos la configuración de la interfaz existente a la nueva interfaz ```br-ex``` y la editamos.
 En el ``nodenetwork``:
@@ -307,98 +314,9 @@ En el `nodenetwork`:
 ```
 [root@network ~]# systemctl restart network
 ```
+Comprobamos que todos los cambios han surtido efecto ejecutando de nuevo ``ifconfig``.
+![install_003](https://github.com/manuparra/openstack/blob/master/imgs/img_003.png?raw=true)
 
-### Acceder a la interfaz web
-
-Accedemos al `dashboard` escribiendo en nuestro navegador web la IP correspondiente al ``nodecontroller``.
-
-```
-https://192.168.10.150/dashboard
-```
-
-### Crear proyectos y añadir usuarios
-
-Para crear un proyecto y añadir usuarios en OpenStack tenemos dos métodos: mediante la línea de comandos o mediante la interfaz.
-
-Si elegimos la primera opción, tendremos que hacer ``source`` del fichero ``keystoneadminrc``. Para ello ejecutamos en ``nodecontroller`` el siguiente comando: ``source keystoneadminrc``.
-
-Una vez hecho esto, deberemos cargar una serie de variables que servirán para autenticarnos contra OpenStack y poder ejecutar comandos propios sin problema. Así pues, añadimos el siguiente contenido a un fichero ``.sh``, lo guardamos y volvemos a hacerle ``source`` con ``source credenciales.sh``.
-
-```
-export OS_USERNAME=admin
-export OS_PASSWORD=<contraseña admin>
-export OS_PROJECT_NAME=<nombre proyecto>
-export OS_USER_DOMAIN_NAME=Default
-export OS_PROJECT_DOMAIN_NAME=Default
-export OS_AUTH_URL=http://nodecontroller:<port>/v3
-export OS_IDENTITY_API_VERSION=3
-```
-En caso de que tengamos alguna duda sobre estas credenciales, nos podemos descargar uno ya creado desde nuestra interfaz web. Para ello accedemos a  Proyecto&rightarrow;Compute&rightarrow;Acceso y seguridad y ``Fichero RC de OpenStack v3 o v2`` según el caso.
-
-Desde interfaz:
-- Nos logeamos en el dashboard con las credenciales del admin y accedemos en el menú situado a la izquierda a Identidad&rightarrow;Proyectos&rightarrow; y clickamos en crear proyecto
-
-Desde terminal:
-```
-openstack project create --domain default --description "Proyecto demo" demo
-```
-
-Para crear usuarios
-
-Desde interfaz:
-- Con el mismo login de admin. Vamos a Identidad&rightarrow;Usuarios&rightarrow;Crear usuario. Rellenamos los parámetros que se pidan, en mi caso solo rellenamos los campos obligatorios y asociamos el usuario al proyecto que deseemos.
-
-Desde terminal:
-```
-openstack user create --domain default --password-prompt demo
-```
-
-#### Crear un "sabor" e imagen
-
-
-#### Crear la red y el router del proyecto
-
-Para la creación de la red hay que loguearse con un usuario, por ejemplo, el que hemos creado anteriormente. Se tienen que configurar dos redes (interna y externa), la interna será la red que se encargará de asignar entre las máquinas la IP y la externa será através de la que saldrá al exterior(a Internet). Para la creación de la red interna ```Proyecto -> Redes -> Crear red```. Esta sería la configuración:
-```
-Nombre de la red: red interna
-Estado de administracion: Arriba
-Crear Subred: Marcado
-Nombre de Subred: subred-interna
-Direcciones de red: 10.10.0.0/24
-Version IP: IPv4
-IP de la Puerta de Enlace: 10.10.0.1
-DHCP: Habilitado
-```
-La IP proporcionada en esta red puede ser aleatoria total ya que va a ser la red interna.
-
-Para la creación de la red externa hacemos lo mismo que hemos hecho con la red interna ```Proyecto->Redes->Crear Red```
-
-```
-Nombre de la red: red externa
-Estado de administracion: Arriba
-Crear Subred: Marcado
-Nombre de Subred: subred-externa
-Direcciones de red: 192.168.10.0/24
-Version IP: IPv4
-IP de la Puerta de Enlace: 192.168.10.1
-DHCP: Habilitado
-```
-Para saber la GATEWAY podemos ver el fichero ```br-ex``` que modificamos unos pasos atrás. Dado que estamos creando la red externa que será la que de acceso hacia afuera en las MVS, la puerta de enlace debe de ser la misma que la configurada en el fichero ```br-ex``` y la IP en un rango de éste. 
-
-Una vez hecho todo esto desde el usuario, tenemos que marcar la Red Externa como Externa. Nos deslogeamos del usuario y nos logeamos como admin y accedemos a ```Admin->Sistema->Redes```, pulsamos la Red Externa creada y marcamos el cuadrado de ```red externa```.
-
-Establecida la red desde el administrador como externa, nos volvemos a logear con el usuario y pasamos a crear el router para conectar nuestras dos redes y poder enviar y recibir paquetes. Accedemos a ```Proyecto->Red->Routers```
-
-```
-Nombre del Router: <Nombre del router>
-Estado de administracion: Arriba
-Red Externa: red externa 
-```
-Una vez creado el router debemos de ser capaces de verlo en el ```dashboard``` del router. Pinchamos en el router que hemos añadido y clickamos en ```Añadir interfaz```. Seleccionamos la subred interna, en nuestro caso ```subred-interna```, el resto de datos no es necesario añadirlos por lo que los dejamos en blanco y guardamos. Hecho todo esto ya estaría la red lista
-
-#### Añadir grupos de seguridad y claves
-
-### Lanzar una instancia
 
 ## Añadiendo espacio a CINDER
 
