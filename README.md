@@ -42,6 +42,7 @@ Contenido
    * [Afinar la instalación de OpenStack](#afinar-la-instalación-de-openstack)
       * [Añadir más nodos de almacenamiento con CINDER](#añadir-más-nodos-de-almacenamiento-con-cinder)
       * [Añadir más nodos de RED (network)](#añadir-más-nodos-de-red-network)
+	  * [Habilitar Sahara DataProcessing en Horizon](#horizonabilitar-dataprocessing-con-sahara-en-horizon)
    * [ Referencias](#referencias)
 
 
