@@ -102,14 +102,15 @@ Direcciones de red: 192.168.10.0/24
 Version IP: IPv4
 IP de la Puerta de Enlace: 192.168.10.1
 DHCP: Habilitado
-```
 
-En caso de que queramos asignarle un rango de IP's especificos para las IP's flotantes, en la creacion de la subred le damos a la pestaña de ```Detalles de red``` y en ```Pools de asignación```le indicamos desde donde a donde queremos que asigne. En nuestro caso sería así ```192.168.10.210,192.168.10.220```.
+En caso de que queramos asignarle un rango de IP's especificos para las IP's flotantes, en la creacion de la subred le damos a la pestaña de ```Detalles de red``` y en ```Pools de asignación``` le indicamos desde donde a donde queremos que asigne. En nuestro caso sería así ```192.168.10.210,192.168.10.220```.
 
 Para saber la GATEWAY podemos ver el fichero ```br-ex``` que modificamos unos pasos atrás. Dado que estamos creando la red externa que será la que de acceso hacia afuera en las MVS, la puerta de enlace debe de ser la misma que la configurada en el fichero ```br-ex``` y la IP en un rango de éste.
+
 ![install_014](https://github.com/manuparra/openstack/blob/master/imgs/img_014.png?raw=true)
 
 Una vez hecho todo esto desde el usuario, tenemos que marcar la Red Externa como Externa. Nos deslogeamos del usuario y nos logeamos como admin y accedemos a ```Admin->Sistema->Redes```, pulsamos la Red Externa creada y marcamos el cuadrado de ```red externa```.
+
 ![install_015](https://github.com/manuparra/openstack/blob/master/imgs/img_015.png?raw=true)
 Establecida la red desde el administrador como externa, nos volvemos a logear con el usuario y pasamos a crear el router para conectar nuestras dos redes y poder enviar y recibir paquetes. Accedemos a ```Proyecto->Red->Routers```
 
