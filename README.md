@@ -420,8 +420,25 @@ Finalmente reiniciar apache:
 ```
 service httpd restart
 ```
+## Personalizar el arranque con cloud-init.
 
+En el caso de que tengamos que realizar ciertas tareas durante el arranque de nuestras imágenes, podemos recurrir a *cloud-init*. Así pues, durante la configuración de nuestra nueva instancia podemos añadir nuestro *script* en el siguiente menú:
 
+![cloudinit](https://i.imgur.com/S1J44vt.png)
 
+Esto es muy útil ya que algunas imágenes de ciertos sistemas operativos (Ubuntu, por ejemplo) requieren la inyección de una clave SSH para conectar y de esta manera podemos inyectarla al usuario que queramos (entre otras cosas). Por ejemplo, para crear un usuario, añadirle una clave y modificar los DNS podríamos usar el siguiente *script*:
+```#cloud-config
+users:
+  - name: tfg_user
+    ssh-authorized-keys:
+      - ssh-rsa <clave generado por OpenStack>
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: sudo
+    shell: /bin/bash
+runcmd:
+  - echo 'interface "ens3" {prepend domain-name-servers 8.8.8.8;}' | sudo tee --append /etc/dhcp/dhclient.conf
+  - sudo reboot```
+
+Para ver otras posibles opciones, se enlazan los ejemplos de la página oficial: [Cloud config examples](https://cloudinit.readthedocs.io/en/latest/topics/examples.html)
 
 # Referencias
